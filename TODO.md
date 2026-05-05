@@ -1,0 +1,4 @@
+- [ ] Edit `setup_database.php` untuk membuat tabel `transaksi` (jika belum ada) + tambahkan `pelanggan_id` dan foreign key ke `pelanggan(id)`.
+- [ ] Edit `proses/simpan_transaksi.php` agar ketika menyimpan transaksi, sistem mencari/menambah pelanggan berdasarkan `nama_pelanggan`, lalu menyimpan `pelanggan_id` (FK) ke tabel `transaksi`.
+- [ ] Edit `pages/transaksi/index.php` agar listing transaksi menampilkan nama pelanggan dengan JOIN bila `pelanggan_id` tersedia.
+- [ ] Jalankan `setup_database.php`, lalu uji tambah transaksi dan cek relasi di Navicat.

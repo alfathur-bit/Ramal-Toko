@@ -1,0 +1,104 @@
+<?php
+session_start();
+
+// Cek login
+if(!isset($_SESSION['login'])){
+    header("Location: ../../auth/login.php");
+    exit;
+}
+
+// Koneksi langsung
+$conn = mysqli_connect("localhost","root","","RamalToko_db");
+if(!$conn){
+    die("Koneksi gagal");
+}
+
+// Ambil data produk
+$id = $_GET['id'] ?? 0;
+$produk = mysqli_query($conn, "SELECT * FROM produk WHERE id = $id");
+$data = mysqli_fetch_assoc($produk);
+
+if(!$data){
+    die("Produk tidak ditemukan");
+}
+
+// Update produk
+if(isset($_POST['update'])){
+    $nama = trim($_POST['nama']);
+    $kategori_id = (int)$_POST['kategori_id'];
+    $harga = (int)$_POST['harga'];
+    $stok = (int)$_POST['stok'];
+    
+    mysqli_query($conn, "UPDATE produk SET nama='$nama', kategori_id=$kategori_id, harga=$harga, stok=$stok WHERE id=$id");
+    header("Location: index.php");
+    exit;
+}
+
+// Ambil kategori
+$kategori = mysqli_query($conn, "SELECT * FROM kategori ORDER BY nama");
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Produk - RamalToko</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background:#f1f5f9; }
+        .sidebar { width:220px; height:100vh; position:fixed; background:#1e293b; color:white; padding:20px; }
+        .sidebar a { display:block; color:white; padding:10px; text-decoration:none; margin-top:10px; }
+        .sidebar a:hover { background:#334155; }
+        .content { margin-left:240px; padding:20px; }
+    </style>
+    <link href="/RamalToko/assets/style.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h4>RamalToko</h4>
+    <a href="../dashboard.php"><i class="fa fa-home"></i> Dashboard</a>
+    <a href="index.php"><i class="fa fa-box"></i> Produk</a>
+    <a href="../transaksi/index.php"><i class="fa fa-cart-shopping"></i> Transaksi</a>
+    <a href="../../auth/logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+    <h2><i class="fa fa-edit"></i> Edit Produk</h2>
+    
+    <div class="card" style="max-width: 500px;">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label>Nama Produk</label>
+                    <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($data['nama']) ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label>Kategori</label>
+                    <select name="kategori_id" class="form-select" required>
+                        <?php while($k = mysqli_fetch_assoc($kategori)): ?>
+                        <option value="<?= $k['id'] ?>" <?= ($data['kategori_id'] == $k['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($k['nama']) ?>
+                        </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Harga</label>
+                    <input type="number" name="harga" class="form-control" value="<?= $data['harga'] ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label>Stok</label>
+                    <input type="number" name="stok" class="form-control" value="<?= $data['stok'] ?>" required>
+                </div>
+                <button type="submit" name="update" class="btn btn-success"><i class="fa fa-save"></i> Update</button>
+                <a href="index.php" class="btn btn-secondary">Kembali</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

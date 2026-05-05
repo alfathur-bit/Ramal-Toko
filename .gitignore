@@ -1,0 +1,19 @@
+# PHP project ignores
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Database
+config/koneksi.php
+*.sql
+*.bak
+
+# Assets
+assets/product-images/*
+!assets/product-images/placeholder.svg
+
+# Temp files
+*.rar
+*.zip
+*.html [temp]
